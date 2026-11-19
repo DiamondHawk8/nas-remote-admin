@@ -1,0 +1,32 @@
+name: swen549-remote-admin
+
+services:
+  tailscale:
+    image: "${TAILSCALE_IMAGE:?Missing TAILSCALE_IMAGE in .env}"
+    hostname: argo-nas
+    network_mode: host
+    restart: unless-stopped
+
+    environment:
+      TS_HOSTNAME: argo-nas
+      TS_STATE_DIR: /var/lib/tailscale
+      TS_USERSPACE: "false"
+      TS_AUTH_ONCE: "true"
+      TS_ACCEPT_DNS: "false"
+      TS_EXTRA_ARGS: "--accept-routes=false --ssh=false --netfilter-mode=off"
+
+    volumes:
+      - ./tailscale-state:/var/lib/tailscale
+
+    devices:
+      - /dev/net/tun:/dev/net/tun
+
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

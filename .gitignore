@@ -1,0 +1,5 @@
+/tailscale-state/
+.env
+.env.*
+!.env.example
+*.log
